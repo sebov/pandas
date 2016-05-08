@@ -3105,7 +3105,11 @@ class DataFrame(NDFrame):
             subset = subset,
 
         vals = (self[col].values for col in subset)
-        labels, shape = map(list, zip(*map(f, vals)))
+        labels_shape = tuple(map(list, zip(*map(f, vals))))
+        if labels_shape:
+            labels, shape = labels_shape
+        else:
+            labels, shape = [np.repeat(0, len(self))], [1]
 
         ids = get_group_index(labels, shape, sort=False, xnull=False)
         return Series(duplicated_int64(ids, keep), index=self.index)
